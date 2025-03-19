@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einkaufsliste - Shopverwaltung</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="shopping-list-container">
+        <h1>Einkaufsliste</h1>
+
+        <!-- Formular zum Hinzufügen von Artikeln zur Einkaufsliste -->
+        <form id="add-item-form">
+            <label for="item-id">Artikel:</label>
+            <select id="item-id" required></select>
+
+            <label for="quantity">Menge:</label>
+            <input type="number" id="quantity" required min="1">
+            
+            <button type="submit">Zur Einkaufsliste hinzufügen</button>
+        </form>
+
+        <!-- Tabelle zur Anzeige der Einkaufsliste -->
+        <table id="shopping-list-table">
+            <thead>
+                <tr>
+                    <th>Artikel ID</th>
+                    <th>Artikelname</th>
+                    <th>Preis</th>
+                    <th>Menge</th>
+                    <th>Gesamtpreis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Hier wird die Einkaufsliste dynamisch angezeigt -->
+            </tbody>
+        </table>
+
+        <!-- Button zum Bestellen der Artikel -->
+        <button id="place-order-btn">Bestellung abschicken</button>
+    </div>
+
+    <script src="shopping-list.js"></script>
+</body>
+</html>

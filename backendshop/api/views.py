@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from django.db import models
+from django.db.models import Sum, F
 from .models import Employee, Article, Category, ShoppingList, Order, OrderItem, FinanceOverview
 from .serializers import EmployeeSerializer, ArticleSerializer, CategorySerializer, ShoppingListSerializer, OrderSerializer, OrderItemSerializer
 
@@ -75,14 +75,31 @@ class FinanceOverviewView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        total_revenue = OrderItem.objects.aggregate(total_revenue=models.Sum(models.F('price') * models.F('quantity')))['total_revenue'] or 0
-        total_cost = ShoppingList.objects.aggregate(total_cost=models.Sum(models.F('article__price') * models.F('quantity')))['total_cost'] or 0
-        total_profit = total_revenue - total_cost
+        try:
+            # Alle Berechnungen in Decimal
+            total_salaries = Employee.objects.aggregate(
+                total=Sum('salary')
+            )['total'] or 0
 
-        finance_data = {
-            "total_revenue": total_revenue,
-            "total_cost": total_cost,
-            "total_profit": total_profit
-        }
+            inventory_value = Article.objects.aggregate(
+                total=Sum(F('price') * F('stock'))
+            )['total'] or 0
 
-        return Response(finance_data, status=200)
+            pending_orders = ShoppingList.objects.aggregate(
+                total=Sum(F('article__price') * F('quantity'))
+            )['total'] or 0
+
+            cashflow = inventory_value - pending_orders - total_salaries
+
+            return Response({
+                "monthly_costs": float(total_salaries),
+                "inventory_value": float(inventory_value),
+                "pending_orders": float(pending_orders),
+                "cashflow": float(cashflow)
+            }, status=200)
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=500
+            )

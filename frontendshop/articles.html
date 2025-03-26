@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <!-- Zeichensatz und Viewport-Einstellungen für responsives Design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artikelverwaltung</title>
+    <!-- Einbinden von Bootstrap CSS über CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JavaScript Bundle (enthält Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <div class="container mt-5">
+    <!-- Überschrift der Seite -->
     <h2>Artikelverwaltung</h2>
+    <!-- Navigation: Link zurück zum Dashboard -->
     <a href="dashboard.html" class="btn btn-secondary mb-3">← Zurück zum Dashboard</a>
+    <!-- Navigation: Link zur Kategorienverwaltung (zum Hinzufügen einer Kategorie) -->
     <a href="categories.html" class="btn btn-danger mb-3">+ Kategorie hinzufügen</a>
 
+    <!-- Button, um das Modal zum Hinzufügen eines neuen Artikels zu öffnen -->
     <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">Artikel hinzufügen</button>
 
+    <!-- Tabelle zur Anzeige der Artikel -->
     <table class="table">
         <thead>
         <tr>
@@ -26,6 +34,7 @@
             <th>Aktionen</th>
         </tr>
         </thead>
+        <!-- Der tbody-Bereich wird dynamisch via JavaScript (articles.js) befüllt -->
         <tbody id="article-table"></tbody>
     </table>
 </div>
@@ -34,18 +43,22 @@
 <div class="modal fade" id="addArticleModal">
     <div class="modal-dialog">
         <div class="modal-content">
+            <!-- Modal-Kopfbereich -->
             <div class="modal-header">
                 <h5 class="modal-title">Neuen Artikel hinzufügen</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <!-- Modal-Körper: Formular zum Hinzufügen eines Artikels -->
             <div class="modal-body">
                 <form id="add-article-form">
+                    <!-- Eingabefelder für Artikelname, Preis, Bestand und Kategorie -->
                     <input type="text" class="form-control mb-2" id="name" placeholder="Artikelname" required>
                     <input type="number" class="form-control mb-2" id="price" placeholder="Preis (€)" required>
                     <input type="number" class="form-control mb-2" id="stock" placeholder="Bestand" required>
                     <select class="form-control mb-2" id="category" required>
                         <option value="">Kategorie wählen</option>
                     </select>
+                    <!-- Absende-Button zum Speichern des Artikels -->
                     <button type="submit" class="btn btn-primary w-100">Speichern</button>
                 </form>
             </div>
@@ -57,19 +70,24 @@
 <div class="modal fade" id="editArticleModal">
     <div class="modal-dialog">
         <div class="modal-content">
+            <!-- Modal-Kopfbereich für das Bearbeiten -->
             <div class="modal-header">
                 <h5 class="modal-title">Artikel bearbeiten</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <!-- Modal-Körper: Formular zum Bearbeiten eines Artikels -->
             <div class="modal-body">
                 <form id="edit-article-form">
+                    <!-- Verstecktes Feld zur Speicherung der Artikel-ID -->
                     <input type="hidden" id="edit-article-id">
+                    <!-- Eingabefelder für Artikelname, Preis, Bestand und Kategorie -->
                     <input type="text" class="form-control mb-2" id="edit-name" placeholder="Artikelname" required>
                     <input type="number" class="form-control mb-2" id="edit-price" placeholder="Preis (€)" required>
                     <input type="number" class="form-control mb-2" id="edit-stock" placeholder="Bestand" required>
                     <select class="form-control mb-2" id="edit-category" required>
                         <option value="">Kategorie wählen</option>
                     </select>
+                    <!-- Absende-Button zum Speichern der Änderungen -->
                     <button type="submit" class="btn btn-primary w-100">Speichern</button>
                 </form>
             </div>
@@ -77,6 +95,7 @@
     </div>
 </div>
 
+<!-- Einbinden der JavaScript-Dateien für Authentifizierung und Artikelverwaltung -->
 <script src="js/auth.js"></script>
 <script src="js/articles.js"></script>
 

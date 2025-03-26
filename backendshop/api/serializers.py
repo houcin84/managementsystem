@@ -18,17 +18,24 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ShoppingListSerializer(serializers.ModelSerializer):
+    # Für Lesezugriffe: Vollständige Artikel-Daten
+    article = ArticleSerializer(read_only=True)
+    
+    # Für Schreibzugriffe: Nur Artikel-ID
+    article_id = serializers.PrimaryKeyRelatedField(
+        queryset=Article.objects.all(),
+        source='article',
+        write_only=True
+    )
+    
     total_cost = serializers.SerializerMethodField()
 
     class Meta:
         model = ShoppingList
-        fields = '__all__'
+        fields = ['id', 'article', 'article_id', 'quantity', 'total_cost']
 
     def get_total_cost(self, obj):
-        return obj.total_cost()
-    
-    def get_article_name(self, obj):
-        return obj.article_name()
+        return obj.article.price * obj.quantity
 
 class OrderSerializer(serializers.ModelSerializer):
     total_price = serializers.SerializerMethodField()

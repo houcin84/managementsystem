@@ -1,85 +1,167 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <!-- Zeichensatz und Viewport-Einstellungen für ein responsives Design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <!-- Bootstrap CSS über CDN einbinden -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons für zusätzliche Icon-Unterstützung -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Eigene CSS-Stile, z.B. für Finanzkarten -->
+    <style>
+        /* Gestaltung der Finanzkarten */
+        .finance-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        /* Hover-Effekt für Finanzkarten */
+        .finance-card:hover {
+            transform: translateY(-3px);
+        }
+        /* Farbe für positiven Cashflow */
+        .cashflow-positive { color: #28a745 !important; }
+        /* Farbe für negativen Cashflow */
+        .cashflow-negative { color: #dc3545 !important; }
+    </style>
 </head>
 <body>
+<!-- Navigation: Obere Leiste mit Dashboard-Titel und Logout-Button -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Dashboard</a>
+        <!-- Logout-Button, ruft die logout()-Funktion auf -->
         <button class="btn btn-danger" onclick="logout()">Logout</button>
     </div>
 </nav>
 
 <div class="container mt-5">
+    <!-- Begrüßungstext -->
     <h2>Willkommen auf der Startseite</h2>
+    
+    <!-- Navigationsbuttons zu anderen Verwaltungsseiten -->
     <div class="row mt-4">
         <div class="col-md-6">
-            <a href="employees.html" class="btn btn-primary w-100">Mitarbeiter verwalten</a>
+            <a href="employees.html" class="btn btn-primary w-100 mb-3">Mitarbeiter verwalten</a>
         </div>
         <div class="col-md-6">
-            <a href="articles.html" class="btn btn-success w-100">Artikel verwalten</a>
+            <a href="articles.html" class="btn btn-success w-100 mb-3">Artikel verwalten</a>
         </div>
     </div>
 
-    <!-- Finanzübersicht -->
-    <div class="row mt-5">
-        <div class="col-md-4">
-            <h4>Umsatz</h4>
-            <p id="umsatz">Lädt...</p>
+    <!-- Finance-Übersicht: Anzeige von Finanzdaten in Karten -->
+    <div class="row g-4 mt-3">
+        <!-- Fixkosten-Karte -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card finance-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">
+                        <i class="bi bi-currency-euro"></i> Fixkosten
+                    </h5>
+                    <!-- Dynamischer Wert, wird per JavaScript aktualisiert -->
+                    <h2 id="monthly-costs" class="text-danger">0.00 €</h2>
+                    <small class="text-muted">Monatliche Personalkosten</small>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-            <h4>Kosten</h4>
-            <p id="betriebskosten">Lädt...</p>
+
+        <!-- Lagerwert-Karte -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card finance-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">
+                        <i class="bi bi-box-seam"></i> Lagerwert
+                    </h5>
+                    <h2 id="inventory-value" class="text-success">0.00 €</h2>
+                    <small class="text-muted">Gesamtwert aller Artikel</small>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-            <h4>Bestand</h4>
-            <p id="gewinn">Lädt...</p>
+
+        <!-- Geplante Ausgaben-Karte -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card finance-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">
+                        <i class="bi bi-cart"></i> Geplante Ausgaben
+                    </h5>
+                    <h2 id="pending-orders" class="text-warning">0.00 €</h2>
+                    <small class="text-muted">Ausstehende Bestellungen</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cashflow-Karte -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card finance-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">
+                        <i class="bi bi-graph-up"></i> Cashflow
+                    </h5>
+                    <h2 id="cashflow">0.00 €</h2>
+                    <small class="text-muted">Aktuelle Liquidität</small>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Abschnitt für Einkaufsliste und Bestellung -->
+    <!-- Einkaufsliste: Abschnitt zur Verwaltung und Bestellabwicklung -->
     <div class="row mt-5">
         <div class="col-md-12">
-            <h4>Einkaufsliste</h4>
+            <h4 class="mb-4">Einkaufsliste</h4>
             
-            <!-- Formular zum Hinzufügen von Artikeln zur Einkaufsliste -->
-            <form id="add-item-form">
-                <label for="item-id">Artikel:</label>
-                <select id="item-id" required></select>
-
-                <label for="quantity">Menge:</label>
-                <input type="number" id="quantity" required min="1">
-                
-                <button type="submit">Zur Einkaufsliste hinzufügen</button>
+            <!-- Formular zum Hinzufügen eines neuen Artikels zur Einkaufsliste -->
+            <form id="add-item-form" class="mb-4">
+                <div class="row g-3">
+                    <!-- Dropdown zur Auswahl eines Artikels -->
+                    <div class="col-md-4">
+                        <select class="form-select" id="item-id" required>
+                            <option value="">Artikel wählen...</option>
+                        </select>
+                    </div>
+                    <!-- Eingabefeld für die Menge -->
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" id="quantity" placeholder="Menge" min="1" required>
+                    </div>
+                    <!-- Button zum Hinzufügen des Artikels -->
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-cart-plus"></i> Hinzufügen
+                        </button>
+                    </div>
+                </div>
             </form>
 
-            <!-- Tabelle zur Anzeige der Einkaufsliste -->
-            <table id="shopping-list-table">
-                <thead>
-                    <tr>
-                        <th>Artikel ID</th>
-                        <th>Artikelname</th>
-                        <th>Preis</th>
-                        <th>Menge</th>
-                        <th>Gesamtpreis</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Hier wird die Einkaufsliste dynamisch angezeigt -->
-                </tbody>
-            </table>
+            <!-- Tabelle zur Anzeige der aktuellen Einkaufsliste -->
+            <div class="table-responsive">
+                <table class="table table-hover" id="shopping-list-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Artikel ID</th>
+                            <th>Artikelname</th>
+                            <th>Preis</th>
+                            <th>Menge</th>
+                            <th>Gesamtpreis</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamische Inhalte werden hier per JavaScript eingefügt -->
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- Button zum Bestellen der Artikel -->
-            <button id="place-order-btn">Bestellung abschicken</button>
+            <!-- Button zum Abschicken der gesamten Bestellung -->
+            <button class="btn btn-success mt-3" id="place-order-btn">
+                <i class="bi bi-check2-circle"></i> Bestellung abschicken
+            </button>
         </div>
     </div>
 </div>
 
-<script src="js/auth.js"></script>
+<!-- Hinweis: auth.js wurde entfernt, da die Authentifizierung in dashboard.js integriert ist -->
 <script src="js/dashboard.js"></script>
 </body>
 </html>

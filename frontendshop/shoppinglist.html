@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Einkaufsliste - Shopverwaltung</title>
+    <!-- Einbindung der externen CSS-Datei für das Styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,17 +13,20 @@
 
         <!-- Formular zum Hinzufügen von Artikeln zur Einkaufsliste -->
         <form id="add-item-form">
+            <!-- Dropdown zur Auswahl eines Artikels -->
             <label for="item-id">Artikel:</label>
             <select id="item-id" required></select>
 
+            <!-- Eingabefeld für die gewünschte Menge -->
             <label for="quantity">Menge:</label>
             <input type="number" id="quantity" required min="1">
             
+            <!-- Button zum Hinzufügen des Artikels zur Einkaufsliste -->
             <button type="submit">Zur Einkaufsliste hinzufügen</button>
         </form>
 
         <!-- Tabelle zur Anzeige der Einkaufsliste -->
-        <table id="shopping-list-table">
+        <table>
             <thead>
                 <tr>
                     <th>Artikel ID</th>
@@ -30,17 +34,19 @@
                     <th>Preis</th>
                     <th>Menge</th>
                     <th>Gesamtpreis</th>
+                    <th>Aktion</th> <!-- Spalte für Löschen oder Bearbeiten -->
                 </tr>
             </thead>
-            <tbody>
-                <!-- Hier wird die Einkaufsliste dynamisch angezeigt -->
+            <tbody id="shopping-list-table">
+                <!-- Hier werden die Einträge dynamisch eingefügt -->
             </tbody>
         </table>
 
-        <!-- Button zum Bestellen der Artikel -->
+        <!-- Button zum Abschicken der Bestellung -->
         <button id="place-order-btn">Bestellung abschicken</button>
     </div>
 
-    <script src="shopping-list.js"></script>
+    <!-- Einbindung der JavaScript-Datei für die Einkaufsliste -->
+    <script src="shoppinglist.js"></script>
 </body>
 </html>

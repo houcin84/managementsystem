@@ -20,7 +20,7 @@ function fetchArticles() {
                         <td>${article.name}</td>
                         <td>${article.price} €</td>
                         <td>${article.stock}</td>
-                        <td>${article.category}</td>
+                        <td>${article.category.name}</td>
                         <td>
                             <button class="btn btn-primary btn-sm" onclick="editArticle(${article.id})">Bearbeiten</button>
                             <button class="btn btn-danger btn-sm" onclick="deleteArticle(${article.id})">Löschen</button>
@@ -59,7 +59,7 @@ document.getElementById("add-article-form").addEventListener("submit", function 
         name: document.getElementById("name").value,
         price: document.getElementById("price").value,
         stock: document.getElementById("stock").value,
-        category: document.getElementById("category").value,
+        category_id: document.getElementById("category").value,
     };
 
     fetch(API_URL, {
@@ -110,7 +110,7 @@ function editArticle(id) {
             document.getElementById("edit-name").value = article.name;
             document.getElementById("edit-price").value = article.price;
             document.getElementById("edit-stock").value = article.stock;
-            document.getElementById("edit-category").value = article.category;
+            document.getElementById("edit-category").value = article.category.id;
 
             // Zeigt das Bearbeitungs-Modal an
             const modal = new bootstrap.Modal(document.getElementById('editArticleModal'));
@@ -128,7 +128,7 @@ document.getElementById("edit-article-form").addEventListener("submit", function
         name: document.getElementById("edit-name").value,
         price: document.getElementById("edit-price").value,
         stock: document.getElementById("edit-stock").value,
-        category: document.getElementById("edit-category").value,
+        category_id: document.getElementById("edit-category").value,
     };
 
     const articleId = document.getElementById("edit-article-id").value;

@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Employee, Article, Category, ShoppingList  # Stelle sicher, dass auch ShoppingList importiert ist, wenn du es registrieren möchtest
+from .models import Employee, Article, Category, ShoppingList  # Importiere die Modelle, die im Admin-Panel verwaltet werden sollen
 
-admin.site.register(Employee)
-admin.site.register(Article)
-admin.site.register(Category)
-admin.site.register(ShoppingList)  # Wenn du das Modell ShoppingList registrieren möchtest
+# Registriere die Modelle für das Django Admin-Panel
+admin.site.register(Employee)  # Ermöglicht die Verwaltung von Mitarbeitern
+admin.site.register(Article)  # Ermöglicht die Verwaltung von Artikeln
+admin.site.register(Category)  # Ermöglicht die Verwaltung von Kategorien
+admin.site.register(ShoppingList)  # Ermöglicht die Verwaltung der Einkaufsliste

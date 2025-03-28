@@ -1,0 +1,93 @@
+/* 📌 Globale Stile */
+:root {
+    --primary-color: #2A5C82;    /* Professionelles Blau */
+    --secondary-color: #6C757D;  /* Neutrales Grau */
+    --success-color: #28A745;    /* Bestätigungsgrün */
+    --danger-color: #DC3545;     /* Warnrot */
+    --background-light: #f8f9fa; /* Hintergrundhell */
+  }
+  
+  body {
+    background-color: var(--background-light);
+    font-family: 'Segoe UI', system-ui, sans-serif; /* Modernere Schrift */
+  }
+  
+  /* 📌 Karten-Design (Finanzübersicht) */
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-title {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .card h2 {
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+  
+  /* 📌 Tabellen-Design (Einkaufsliste) */
+  .table {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table thead {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(42, 92, 130, 0.05);
+  }
+  
+  /* 📌 Buttons */
+  .btn {
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-primary:hover {
+    background-color: #234a6b;
+    border-color: #234a6b;
+  }
+  
+  .btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+  }
+  
+  /* 📌 Navigation */
+  .navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* 📌 Modale Fenster */
+  .modal-content {
+    border-radius: 12px;
+  }
+  
+  /* 📌 Responsive Anpassungen */
+  @media (max-width: 768px) {
+    .card {
+      margin-bottom: 1.5rem;
+    }
+  }

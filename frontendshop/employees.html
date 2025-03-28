@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mitarbeiterverwaltung</title>
+    <!-- Bootstrap CSS für Styling und Layout -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Eigene CSS-Stile, z.B. für Finanzkarten -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="container mt-5">
     <h2>Mitarbeiterverwaltung</h2>
+    <!-- Link zurück zum Dashboard -->
     <a href="dashboard.html" class="btn btn-secondary mb-3">← Zurück zum Dashboard</a>
 
-    <!-- Button zum Hinzufügen eines Mitarbeiters -->
-    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Mitarbeiter hinzufügen</button>
+    <!-- Button zum Öffnen des Modals zum Hinzufügen eines Mitarbeiters -->
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+        Mitarbeiter hinzufügen
+    </button>
 
-    <!-- Mitarbeitertabelle -->
+    <!-- Tabelle zur Anzeige der Mitarbeiter -->
     <table class="table">
         <thead>
         <tr>
@@ -23,14 +29,14 @@
             <th>Nachname</th>
             <th>Position</th>
             <th>Gehalt (€)</th>
-            <th>Aktionen</th>
+            <th>Aktionen</th> <!-- Bearbeiten/Löschen Buttons -->
         </tr>
         </thead>
-        <tbody id="employee-table"></tbody>
+        <tbody id="employee-table"></tbody> <!-- Hier werden die Mitarbeiter dynamisch eingefügt -->
     </table>
 </div>
 
-<!-- MODAL: Mitarbeiter hinzufügen -->
+<!-- MODAL: Formular zum Hinzufügen eines neuen Mitarbeiters -->
 <div class="modal fade" id="addEmployeeModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -40,22 +46,27 @@
             </div>
             <div class="modal-body">
                 <form id="add-employee-form">
+                    <!-- Vorname -->
                     <div class="mb-3">
                         <label class="form-label">Vorname</label>
                         <input type="text" class="form-control" id="firstname" required>
                     </div>
+                    <!-- Nachname -->
                     <div class="mb-3">
                         <label class="form-label">Nachname</label>
                         <input type="text" class="form-control" id="lastname" required>
                     </div>
+                    <!-- Position -->
                     <div class="mb-3">
                         <label class="form-label">Position</label>
                         <input type="text" class="form-control" id="position" required>
                     </div>
+                    <!-- Gehalt -->
                     <div class="mb-3">
                         <label class="form-label">Gehalt (€)</label>
                         <input type="number" class="form-control" id="salary" required>
                     </div>
+                    <!-- Speichern-Button -->
                     <button type="submit" class="btn btn-primary w-100">Speichern</button>
                 </form>
             </div>
@@ -63,7 +74,7 @@
     </div>
 </div>
 
-<!-- MODAL: Mitarbeiter bearbeiten -->
+<!-- MODAL: Formular zum Bearbeiten eines Mitarbeiters -->
 <div class="modal fade" id="editEmployeeModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -73,23 +84,29 @@
             </div>
             <div class="modal-body">
                 <form id="edit-employee-form">
+                    <!-- Verstecktes Feld für die Mitarbeiter-ID -->
                     <input type="hidden" id="edit-id">
+                    <!-- Vorname -->
                     <div class="mb-3">
                         <label class="form-label">Vorname</label>
                         <input type="text" class="form-control" id="edit-firstname" required>
                     </div>
+                    <!-- Nachname -->
                     <div class="mb-3">
                         <label class="form-label">Nachname</label>
                         <input type="text" class="form-control" id="edit-lastname" required>
                     </div>
+                    <!-- Position -->
                     <div class="mb-3">
                         <label class="form-label">Position</label>
                         <input type="text" class="form-control" id="edit-position" required>
                     </div>
+                    <!-- Gehalt -->
                     <div class="mb-3">
                         <label class="form-label">Gehalt (€)</label>
                         <input type="number" class="form-control" id="edit-salary" required>
                     </div>
+                    <!-- Änderungen speichern-Button -->
                     <button type="submit" class="btn btn-primary w-100">Änderungen speichern</button>
                 </form>
             </div>
@@ -97,9 +114,11 @@
     </div>
 </div>
 
-
+<!-- Authentifizierungs-Skript (z.B. Token-Prüfung) -->
 <script src="js/auth.js"></script>
+<!-- JavaScript für die Mitarbeiterverwaltung -->
 <script src="js/employees.js"></script>
+<!-- Bootstrap JS für modale Fenster und Interaktionen -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

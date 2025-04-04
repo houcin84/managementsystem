@@ -21,6 +21,7 @@ class Category(models.Model):
 
 # Modell für Artikel (Produkte, Waren)
 class Article(models.Model):
+    reorder_level = models.IntegerField(default=10)
     name = models.CharField(max_length=255)  # Name des Artikels
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Preis des Artikels
     stock = models.IntegerField()  # Lagerbestand

@@ -18,7 +18,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'name', 'price', 'category', 'category_id', 'stock']
+        fields = ['id', 'name', 'price', 'category', 'category_id', 'stock', 'reorder_level']
 
 # Serialisierer für Mitarbeiter (keine speziellen Anpassungen notwendig)
 class EmployeeSerializer(serializers.ModelSerializer):

@@ -13,11 +13,14 @@ function fetchArticles() {
             let table = document.getElementById("article-table");
             table.innerHTML = ""; // Bestehende Tabelleneinträge löschen
             articles.forEach(article => {
+                const stockWarning = article.stock <= article.reorder_level 
+                    ? `<span class="badge bg-danger">Lager kritisch (${article.stock})</span>` 
+                    : "";
                 // Für jeden Artikel wird eine Tabellenzeile erstellt und eingefügt
                 table.innerHTML += `
                     <tr>
                         <td>${article.id}</td>
-                        <td>${article.name}</td>
+                        <td>${article.name} ${stockWarning}</td>
                         <td>${article.price} €</td>
                         <td>${article.stock}</td>
                         <td>${article.category.name}</td>
@@ -79,7 +82,16 @@ document.getElementById("add-article-form").addEventListener("submit", function 
         }
     });
 });
+// Neue Funktionen
+document.getElementById("search").addEventListener("input", filterArticles);
+document.getElementById("category-filter").addEventListener("change", filterArticles);
 
+function filterArticles() {
+    const searchTerm = document.getElementById("search").value.toLowerCase();
+    const categoryId = document.getElementById("category-filter").value;
+    
+    // Filterlogik hier implementieren
+}
 // Asynchrone Funktion zum Löschen eines Artikels. Zeigt eine Bestätigungsmeldung an und sendet dann eine DELETE-Anfrage an die API.
 async function deleteArticle(id) {
     if (confirm("Artikel wirklich löschen?")) {

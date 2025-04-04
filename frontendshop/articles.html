@@ -23,7 +23,13 @@
 
     <!-- Button, um das Modal zum Hinzufügen eines neuen Artikels zu öffnen -->
     <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">Artikel hinzufügen</button>
-
+<!-- Über der Tabelle hinzufügen -->
+<div class="mb-3">
+    <input type="text" id="search" class="form-control" placeholder="Artikel suchen...">
+    <select id="category-filter" class="form-select mt-2">
+        <option value="">Alle Kategorien</option>
+    </select>
+</div>
     <!-- Tabelle zur Anzeige der Artikel -->
     <table class="table">
         <thead>

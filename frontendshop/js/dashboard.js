@@ -1,17 +1,14 @@
-// Prüft, ob ein Token im localStorage vorhanden ist, um unautorisierte Zugriffe zu verhindern
 function checkAuth() {
     if (!localStorage.getItem("token")) {
-        window.location.href = "login.html"; // Umleitung zur Login-Seite
+        window.location.href = "login.html";
     }
 }
 
-// Logout-Funktion: Entfernt das Token und leitet zur Login-Seite weiter
 function logout() {
     localStorage.removeItem("token");
     window.location.href = "login.html";
 }
 
-// Holt Finanzdaten vom Server und aktualisiert die Anzeige
 function fetchUebersicht() {
     const formatter = new Intl.NumberFormat('de-DE', {
         style: 'currency',
@@ -30,12 +27,10 @@ function fetchUebersicht() {
         return response.json();
     })
     .then(data => {
-        // Aktualisiert die Finanzwerte mit formatierten Beträgen
         document.getElementById("monthly-costs").textContent = formatter.format(data.monthly_costs);
         document.getElementById("inventory-value").textContent = formatter.format(data.inventory_value);
         document.getElementById("pending-orders").textContent = formatter.format(data.pending_orders);
         
-        // Setzt den Cashflow-Wert und passt das Design an (positiv oder negativ)
         const cashflowElement = document.getElementById("cashflow");
         cashflowElement.textContent = formatter.format(data.cashflow);
         cashflowElement.classList.toggle('cashflow-positive', data.cashflow >= 0);
@@ -43,7 +38,6 @@ function fetchUebersicht() {
     })
     .catch(error => {
         console.error("Fehler:", error);
-        // Falls ein Fehler auftritt, wird eine Fehlermeldung angezeigt
         document.querySelectorAll('.card h2').forEach(el => {
             el.textContent = "Fehler";
             el.classList.add('text-danger');
@@ -51,21 +45,17 @@ function fetchUebersicht() {
     });
 }
 
-// Führt Funktionen nach dem Laden der Seite aus
 document.addEventListener("DOMContentLoaded", () => {
-    checkAuth(); // Prüft Authentifizierung
+    checkAuth();
 
-    // Referenzen zu den relevanten Elementen
     const addItemForm = document.getElementById('add-item-form');
     const itemSelect = document.getElementById('item-id');
     const quantityInput = document.getElementById('quantity');
     const shoppingListTable = document.getElementById('shopping-list-table').getElementsByTagName('tbody')[0];
 
-    // API-Endpunkte
     const articlesApiUrl = "http://localhost:8000/api/articles/";
     const shoppingListApiUrl = "http://localhost:8000/api/shoppinglist/";
 
-    // Erzeugt das Header-Objekt für authentifizierte API-Anfragen
     function getAuthHeaders() {
         return {
             "Content-Type": "application/json",
@@ -73,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // Lädt verfügbare Artikel in das Dropdown-Menü
     function loadArticles() {
         fetch(articlesApiUrl + `?cache=${Date.now()}`, {
             headers: getAuthHeaders(),
@@ -88,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data.forEach(article => {
                 const option = document.createElement('option');
                 option.value = article.id;
-                const price = Number(article.price) || 0; // Preis sicher als Zahl behandeln
+                const price = Number(article.price) || 0;
                 option.textContent = `${article.name} - ${price.toFixed(2)} €`;
                 itemSelect.appendChild(option);
             });
@@ -99,7 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Lädt die Einkaufsliste und zeigt sie in der Tabelle an
     function loadShoppingList() {
         fetch(shoppingListApiUrl + `?cache=${Date.now()}`, {
             headers: getAuthHeaders(),
@@ -110,22 +98,30 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
         .then(data => {
-            shoppingListTable.innerHTML = ''; // Leert die aktuelle Tabelle
+            shoppingListTable.innerHTML = '';
             data.forEach(item => {
-                const price = Number(item.article?.price) || 0; // Preis sicherstellen
-                const totalPrice = price * item.quantity; // Gesamtpreis berechnen
+                const price = Number(item.article?.price) || 0;
+                const totalPrice = price * item.quantity;
                 const row = `
-                    <tr>
+                    <tr data-id="${item.id}">
                         <td>${item.article?.id || '–'}</td>
                         <td>${item.article?.name || 'Unbekannt'}</td>
-                        <td>${item.article?.category?.name || '–'}</td> <!-- Kategorie -->
+                        <td>${item.article?.category?.name || '–'}</td>
                         <td>${price.toFixed(2)} €</td>
-                        <td>${item.quantity}</td>
+                        <td class="quantity-cell">
+                            <span class="quantity-value">${item.quantity}</span>
+                            <div class="edit-quantity d-none">
+                                <input type="number" value="${item.quantity}" min="1" class="form-control form-control-sm">
+                                <button class="btn btn-success btn-sm save-btn">Speichern</button>
+                                <button class="btn btn-secondary btn-sm cancel-btn">Abbrechen</button>
+                            </div>
+                        </td>
                         <td>${totalPrice.toFixed(2)} €</td>
                         <td>
-                            <button class="btn btn-danger btn-sm delete-btn" 
-                                    data-id="${item.id}"
-                                    title="Löschen">
+                            <button class="btn btn-primary btn-sm edit-btn me-1">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-btn">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -133,27 +129,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 shoppingListTable.insertAdjacentHTML('beforeend', row);
             });
 
-            // Event-Listener für die Lösch-Buttons hinzufügen
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    if (confirm("Artikel wirklich löschen?")) {
-                        deleteShoppingListItem(btn.dataset.id);
-                    }
-                });
-            });
+            addEventListeners();
         })
         .catch(error => {
             console.error("Fehler:", error);
             shoppingListTable.innerHTML = `
                 <tr>
-                    <td colspan="6" class="text-center text-danger">
+                    <td colspan="7" class="text-center text-danger">
                         Fehler beim Laden der Daten
                     </td>
                 </tr>`;
         });
     }
 
-    // Löscht einen Artikel aus der Einkaufsliste
+    function addEventListeners() {
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const itemId = btn.closest('tr').dataset.id;
+                if (confirm("Artikel wirklich löschen?")) {
+                    deleteShoppingListItem(itemId);
+                }
+            });
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.querySelector('.quantity-value').classList.add('d-none');
+                row.querySelector('.edit-quantity').classList.remove('d-none');
+            });
+        });
+
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const itemId = row.dataset.id;
+                const newQuantity = parseInt(row.querySelector('input').value);
+                
+                if (newQuantity < 1) {
+                    alert("Menge muss mindestens 1 sein");
+                    return;
+                }
+
+                updateShoppingListItem(itemId, newQuantity);
+            });
+        });
+
+        document.querySelectorAll('.cancel-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.querySelector('.quantity-value').classList.remove('d-none');
+                row.querySelector('.edit-quantity').classList.add('d-none');
+            });
+        });
+    }
+
     function deleteShoppingListItem(itemId) {
         fetch(`${shoppingListApiUrl}${itemId}/`, {
             method: 'DELETE',
@@ -161,8 +191,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(response => {
             if (!response.ok) throw new Error("Löschen fehlgeschlagen");
-            loadShoppingList(); // Liste nach dem Löschen neu laden
-            fetchUebersicht(); // Finanzdaten aktualisieren
+            loadShoppingList();
+            fetchUebersicht();
         })
         .catch(error => {
             console.error("Fehler:", error);
@@ -170,7 +200,32 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Fügt einen neuen Artikel zur Einkaufsliste hinzu
+    function updateShoppingListItem(itemId, newQuantity) {
+        // Loading-State aktivieren
+        const row = document.querySelector(`tr[data-id="${itemId}"]`);
+        if (row) row.classList.add('updating');
+
+        fetch(`${shoppingListApiUrl}${itemId}/`, {
+            method: 'PATCH',  // Wichtig: PATCH statt PUT verwenden
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ quantity: newQuantity })
+        })
+        .then(response => {
+            if (!response.ok) return response.json().then(err => { throw err; });
+            loadShoppingList();
+            fetchUebersicht();
+        })
+        .catch(error => {
+            console.error("Fehler:", error);
+            alert("Fehler beim Aktualisieren: " + (error.detail || error.message));
+            if (row) {
+                row.classList.remove('updating');
+                row.querySelector('.quantity-value').classList.remove('d-none');
+                row.querySelector('.edit-quantity').classList.add('d-none');
+            }
+        });
+    }
+
     addItemForm.addEventListener('submit', function(event) {
         event.preventDefault();
         const itemId = itemSelect.value;
@@ -195,8 +250,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(() => {
             quantityInput.value = '';
-            loadShoppingList(); // Einkaufsliste neu laden
-            fetchUebersicht(); // Finanzdaten aktualisieren
+            loadShoppingList();
+            fetchUebersicht();
         })
         .catch(error => {
             console.error("Fehler:", error);
@@ -204,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Bestellt alle Artikel in der Einkaufsliste
     document.getElementById('place-order-btn').addEventListener('click', async function() {
         if (!confirm("Alle Artikel bestellen?")) return;
         
@@ -220,15 +274,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         
             alert("Bestellung erfolgreich!");
-            loadShoppingList(); // Einkaufsliste leeren
-            fetchUebersicht(); // Finanzdaten aktualisieren
+            loadShoppingList();
+            fetchUebersicht();
         } catch (error) {
             console.error("Fehler:", error);
             alert("Fehler: " + error.message);
         }
     });
 
-    // Initiale Daten laden
     loadArticles();
     loadShoppingList();
     fetchUebersicht();

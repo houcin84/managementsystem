@@ -1,48 +1,84 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <!-- Zeichensatz und Viewport-Einstellungen für ein responsives Design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Bootstrap CSS über CDN einbinden -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons für zusätzliche Icon-Unterstützung -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Eigene CSS-Stile, z.B. für Finanzkarten -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Gestaltung der Finanzkarten */
         .finance-card {
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
-        /* Hover-Effekt für Finanzkarten */
         .finance-card:hover {
             transform: translateY(-3px);
         }
-        /* Farbe für positiven Cashflow */
         .cashflow-positive { color: #28a745 !important; }
-        /* Farbe für negativen Cashflow */
         .cashflow-negative { color: #dc3545 !important; }
+        .edit-quantity {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .edit-quantity input {
+            width: 70px;
+            display: inline-block;
+        }
+        .edit-quantity .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        .quantity-cell {
+            position: relative;
+            min-width: 120px;
+        }
+        tr.updating {
+            opacity: 0.7;
+            background-color: #f8f9fa;
+        }
+        tr.updating td {
+            position: relative;
+        }
+        tr.updating td::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007bff"><path d="M12 2a10 10 0 1 0 10 10 1 1 0 0 1 2 0 12 12 0 1 1-12-12 1 1 0 0 1 0 2z"/></svg>') no-repeat center;
+            background-size: 20px 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .edit-quantity {
+                flex-direction: column;
+                gap: 3px;
+            }
+            .edit-quantity input {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-<!-- Navigation: Obere Leiste mit Dashboard-Titel und Logout-Button -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Dashboard</a>
-        <!-- Logout-Button, ruft die logout()-Funktion auf -->
         <button class="btn btn-danger" onclick="logout()">Logout</button>
     </div>
 </nav>
 
 <div class="container mt-5">
-    <!-- Begrüßungstext -->
     <h2>Willkommen auf der Startseite</h2>
     
-    <!-- Navigationsbuttons zu anderen Verwaltungsseiten -->
     <div class="row mt-4">
         <div class="col-md-6">
             <a href="employees.html" class="btn btn-primary w-100 mb-3">Mitarbeiter verwalten</a>
@@ -52,23 +88,19 @@
         </div>
     </div>
 
-    <!-- Finance-Übersicht: Anzeige von Finanzdaten in Karten -->
     <div class="row g-4 mt-3">
-        <!-- Fixkosten-Karte -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="card finance-card h-100">
                 <div class="card-body">
                     <h5 class="card-title text-muted">
                         <i class="bi bi-currency-euro"></i> Fixkosten
                     </h5>
-                    <!-- Dynamischer Wert, wird per JavaScript aktualisiert -->
                     <h2 id="monthly-costs" class="text-danger">0.00 €</h2>
                     <small class="text-muted">Monatliche Personalkosten</small>
                 </div>
             </div>
         </div>
 
-        <!-- Lagerwert-Karte -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="card finance-card h-100">
                 <div class="card-body">
@@ -81,7 +113,6 @@
             </div>
         </div>
 
-        <!-- Geplante Ausgaben-Karte -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="card finance-card h-100">
                 <div class="card-body">
@@ -94,7 +125,6 @@
             </div>
         </div>
 
-        <!-- Cashflow-Karte -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="card finance-card h-100">
                 <div class="card-body">
@@ -108,25 +138,20 @@
         </div>
     </div>
 
-    <!-- Einkaufsliste: Abschnitt zur Verwaltung und Bestellabwicklung -->
     <div class="row mt-5">
         <div class="col-md-12">
             <h4 class="mb-4">Bestelliste</h4>
             
-            <!-- Formular zum Hinzufügen eines neuen Artikels zur Einkaufsliste -->
             <form id="add-item-form" class="mb-4">
                 <div class="row g-3">
-                    <!-- Dropdown zur Auswahl eines Artikels -->
                     <div class="col-md-4">
                         <select class="form-select" id="item-id" required>
                             <option value="">Artikel wählen...</option>
                         </select>
                     </div>
-                    <!-- Eingabefeld für die Menge -->
                     <div class="col-md-3">
                         <input type="number" class="form-control" id="quantity" placeholder="Menge" min="1" required>
                     </div>
-                    <!-- Button zum Hinzufügen des Artikels -->
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-cart-plus"></i> Hinzufügen
@@ -135,7 +160,6 @@
                 </div>
             </form>
 
-            <!-- Tabelle zur Anzeige der aktuellen Einkaufsliste -->
             <div class="table-responsive">
                 <table class="table table-hover" id="shopping-list-table">
                     <thead class="table-light">
@@ -146,16 +170,15 @@
                             <th>Preis</th>
                             <th>Menge</th>
                             <th>Gesamtpreis</th>
-                            <th>Aktion</th>
+                            <th>Aktionen</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamische Inhalte werden hier per JavaScript eingefügt -->
+                        <!-- Wird dynamisch befüllt -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- Button zum Abschicken der gesamten Bestellung -->
             <button class="btn btn-success mt-3" id="place-order-btn">
                 <i class="bi bi-check2-circle"></i> Bestellung abschicken
             </button>
@@ -163,7 +186,6 @@
     </div>
 </div>
 
-<!-- Hinweis: auth.js wurde entfernt, da die Authentifizierung in dashboard.js integriert ist -->
 <script src="js/dashboard.js"></script>
 </body>
 </html>
